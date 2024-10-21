@@ -1,4 +1,4 @@
-import {DynamoDBClient, GetItemCommand} from "@aws-sdk/client-dynamodb";
+import {DynamoDBClient, ScanCommand} from "@aws-sdk/client-dynamodb";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -28,13 +28,17 @@ export const handler = async (event) => {
             };
         }
 
-        const getParams = {
+        const scanParams = {
             TableName: DYNAMO_TABLE_NAME,
-            Key: {email: {S: email}},
+            FilterExpression: 'email = :email',
+            ExpressionAttributeValues: {
+                ':email': {S: email}
+            }
         };
 
-        const existingUser = await dynamoDbClient.send(new GetItemCommand(getParams));
-        if (!existingUser.Item) {
+        const data = await dynamoDbClient.send(new ScanCommand(scanParams));
+        console.log(data)
+        if (data.Count === 0) {
             return {
                 statusCode: 200,
                 headers: {
@@ -46,8 +50,8 @@ export const handler = async (event) => {
             };
         }
 
-        console.log(existingUser.Item)
-        if (!bcrypt.compareSync(password, existingUser.Item.password.S)) {
+        const existingUser = data.Items[0]
+        if (!bcrypt.compareSync(password, existingUser.password.S)) {
             return {
                 statusCode: 200,
                 headers: {
@@ -60,18 +64,18 @@ export const handler = async (event) => {
         }
 
         const authToken = jwt.sign(
-            {id: existingUser.Item.id, email: existingUser.Item.email},
+            {id: existingUser.id.S, email: existingUser.email.S},
             JWT_SECRET,
             {expiresIn: '24h'}
         );
 
         const user = {
-            id: existingUser.Item.id.S,
-            name: existingUser.Item.name.S,
-            email: existingUser.Item.email.S,
-            address: existingUser.Item.address.S,
-            imageUrl: existingUser.Item.imageUrl.S,
-            createdOn: existingUser.Item.createdOn.S,
+            id: existingUser.id.S,
+            name: existingUser.name.S,
+            email: existingUser.email.S,
+            address: existingUser.address.S,
+            imageUrl: existingUser.imageUrl.S,
+            createdOn: existingUser.createdOn.S,
         };
 
         return {
