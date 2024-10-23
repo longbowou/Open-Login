@@ -3,7 +3,9 @@
 This Lambda function facilitates secure user authentication by validating credentials against stored user data in
 DynamoDB and generating a JWT (JSON Web Token) for authenticated users. It integrates password hashing with bcrypt for
 enhanced security, ensuring that users’ credentials are safely processed. Here's a detailed breakdown of its core
-functionality:
+functionality.
+
+![Screenshot 2024-10-22 at 10.04.10 PM.png](screenshots/apigateway/Screenshot%202024-10-22%20at%2010.04.10%E2%80%AFPM.png)
 
 ## Key Highlights
 
@@ -49,6 +51,19 @@ This Lambda function ensures a secure, seamless login experience by combining mo
 password hashing and JWT for token-based authentication. It’s highly scalable, serverless, and efficient, ensuring fast
 and secure login even under heavy user loads. This function forms the backbone of any secure, modern authentication
 system, protecting user data while offering smooth, intuitive access to applications.
+
+### What's next ?
+
+Check the [main](https://github.com/longbowou/open-frontend) repository this one is part of.
+
+## Screenshot
+
+![Screenshot 2024-10-22 at 9.49.33 PM.png](screenshots/lambda/Screenshot%202024-10-22%20at%209.49.33%E2%80%AFPM.png)
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 
 
 
